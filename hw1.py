@@ -102,17 +102,22 @@ SP = pd.DataFrame({'dates':np.array(dates),'temp':temp,'p':p,'chl':chl}) # scrip
 SP.temp[SP.temp>50] = np.nan
 
 temp_mean = np.nanmean(SP.temp)
-temp_std = np.std(SP.temp) 
+temp_std = np.std(SP.temp)
 
 
 fig,ax = plt.subplots(1,1,figsize=(12,6))
-ax.set_title('Scripps Pier Temperature Measurements')
 ax.plot(dates,temp,color='tab:red') 
-ax.axhline(y=temp_mean,linestyle='--',color='tab:orange');
+m = ax.axhline(y=temp_mean,linestyle='--',color='blue',label='Mean');
+s1 = ax.axhline(y=temp_mean+temp_std,linestyle='--',color='tab:blue',alpha=0.7,label='Standard Deviation')
+s2 = ax.axhline(y=temp_mean-temp_std,linestyle='--',color='tab:blue',alpha=0.7,label='Standard Deviation')
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%b-%Y')) # b is short, B is long, m is number
 ax.xaxis.set_major_locator(mdates.YearLocator())
 ax.tick_params(axis='x',rotation=45)
+ax.set(title='Scripps Pier Temperature Measurements',xlabel='Time',ylabel=r'Temperature [ $ ^{\circ} $C]')
+
 # fig.autofmt_xdate()
 # ax.set_ylim([10,30])
 ax.grid(which='major',axis='x',color='tab:gray')
+handles = ['Mean','Standard Deviation']
+ax.legend([m,s2],handles,loc='best')
 plt.show()
