@@ -1,6 +1,6 @@
 # SIOC221: Data Analysis 
 # HW1
-
+ 
 import numpy as np 
 import matplotlib.pyplot as plt
 import netCDF4
@@ -33,21 +33,34 @@ dates = [start_time + dt.timedelta(seconds=float(tt)) for tt in time_array]
 # part a: produce line plot of 2021 temps
 
 fig,ax = plt.subplots(1,1,figsize=(12,6))
-plt.scatter(dates,temp,c=temp,cmap='Spectral_r') 
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B-%Y'))
-plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
-plt.gcf().autofmt_xdate()
+ax.plot(dates,temp) #,c=temp,cmap='Spectral_r')
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%B-%Y'))
+ax.xaxis.set_major_locator(mdates.MonthLocator())
+fig.autofmt_xdate()
+ax.set(title='Timeseries of 2021 Temperature Data at Scripps Pier', xlabel='Date', ylabel=r'Temperature [ $^{\circ}$C ]')
 plt.show()
 
 
 # part b: compute mean and stdev 
 
 temp_mean = np.nanmean(temp)
-temp_std = np.std(temp) 
+print(f'Temperature Mean of 2021 is: {temp_mean}')
+temp_std = np.std(temp)
+print(f'Temperature Standard Deviation of 2021 is: {temp_std}')
 
 
+# part c: empirical probability density function
 
-# part c: empirical probability density function (not sure how to do this)
+[num_bin,bin_edges] = np.histogram(temp,bins=200)
+mid_bins = (bin_edges[1:]+bin_edges[0:-1])/2
+
+fig,ax = plt.subplots(1,1,figsize=(12,6))
+ax.set_title('Probability Density Function of 2021 Temperatures')
+ax.set_xlabel(r'Temperature [ $^{\circ} $C]'); ax.set_ylabel('Number of Occurences')
+plt.plot(mid_bins,num_bin) #,c=temp,cmap='Spectral_r')
+plt.show()
+
+
 
 
 
@@ -95,12 +108,15 @@ SP = pd.DataFrame({'dates':np.array(dates),'temp':temp,'p':p,'chl':chl}) # scrip
 # information I couldn't add because size requirements: 'sal':sal, 'station':station,'lon':lon,'lat':lat,'zeta':zeta}) # scripps pier df
 
 # Q2 part a: do the same thing
-
-
 # compute mean and stdev - but excluding anaomalous data
 
+outlier = np.nonzero(SP.temp>50)
 SP.temp[SP.temp>50] = np.nan
 temp[temp>50] = np.nan
+<<<<<<< HEAD:hw1.py
+=======
+
+>>>>>>> 29f27858c5e776fbc56fe77849010b503b308fde:week1/hw1.py
 
 temp_mean = np.nanmean(SP.temp)
 temp_std = np.std(SP.temp)
@@ -114,11 +130,25 @@ s2 = ax.axhline(y=temp_mean-temp_std,linestyle='--',color='tab:blue',alpha=0.7,l
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%b-%Y')) # b is short, B is long, m is number
 ax.xaxis.set_major_locator(mdates.YearLocator())
 ax.tick_params(axis='x',rotation=45)
-ax.set(title='Scripps Pier Temperature Measurements',xlabel='Time',ylabel=r'Temperature [ $ ^{\circ} $C]')
+ax.set(title='Scripps Pier Temperature Measurements Timeseries',xlabel='Time',ylabel=r'Temperature [ $ ^{\circ} $C]')
 
 # fig.autofmt_xdate()
 # ax.set_ylim([10,30])
 ax.grid(which='major',axis='x',color='tab:gray')
 handles = ['Mean','Standard Deviation']
 ax.legend([m,s2],handles,loc='best')
+plt.show()
+
+
+
+# part c: empirical probability density function
+
+[num_bin,bin_edges] = np.histogram(SP.temp[~np.isnan(SP.temp)],bins=200)
+
+mid_bins = (bin_edges[1:]+bin_edges[0:-1])/2
+
+fig,ax = plt.subplots(1,1,figsize=(12,6))
+plt.plot(mid_bins,num_bin) #,c=temp,cmap='Spectral_r')
+ax.set_title('Probability Density Function of Temperature from 2005-2021')
+ax.set_xlabel(r'Temperature [ $^{\circ} $C]'); ax.set_ylabel('Number of Occurences')
 plt.show()
