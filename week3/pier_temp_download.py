@@ -1,9 +1,10 @@
 # function for downloading temp data 
 
 def pier_temp_download(year): 
+	# created by: Victoria Boatwright; October 2023; SIOC 221A HW2
+	
     # years should be an array or list of (number) years of interest
-    # vars_of_interest should be a string list of variables to download from nc file 
-    
+        
     import numpy as np 
     import datetime as dt 
     import pandas as pd 
