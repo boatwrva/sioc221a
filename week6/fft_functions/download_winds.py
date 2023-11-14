@@ -1,10 +1,11 @@
 # function to download wind data and fill missing values 
 
-def download_winds(url=links[0],plotting=0): 
+def download_winds(url,plotting=0): 
     import numpy as np 
     import matplotlib.pyplot as plt
     import xarray as xr 
     import datetime as dt 
+    import netCDF4
 
     
     s0 = dt.datetime(1950,1,1); 
