@@ -1,6 +1,5 @@
 # function for fft and spectra analysis 
 
-
 def fft_analysis(data,time,demean=1,detrend=1,hanning=1,all_pars=0):
     # specifications for inputs: 
     # data_array should be size = (segments,data_in_segment); each data_in_segment column should be the same length
@@ -28,7 +27,7 @@ def fft_analysis(data,time,demean=1,detrend=1,hanning=1,all_pars=0):
     deltat = np.diff(time)
     step = np.nanmean(deltat) # step size (in days)
     Nyq = 1/(2*step) # Nyquist frequency
-    period = step*N # this is the entire period (in days)
+    period = step*N # this is the entire segment period (in days)
     df = 1/period # fundamental frequency
     segs = len(data[:,0]) # total number of segment 
     M = segs
@@ -58,7 +57,9 @@ def fft_analysis(data,time,demean=1,detrend=1,hanning=1,all_pars=0):
             segment = segment-trend*segtime # detrend from calculated trend
         
         if hanning==1: 
-            hanwin = np.cos(np.pi*segtime / period)**2 # calculate hanning window
+            # hanwin = np.cos(np.pi*segtime / period)**2 # calculate hanning window - unreliable: you want an exactly centered hanning window, so use a known independent variable
+            x = np.linspace(-0.5, 0.5, N) # specify known Hanning domain
+            hanwin = (np.cos(x*np.pi))**2 # Hanning values
             segment = segment*hanwin*np.sqrt(8/3) # normalize hanning window by sqrt(8/3)
             
         # compute each segment spectrum 
@@ -88,7 +89,7 @@ def fft_analysis(data,time,demean=1,detrend=1,hanning=1,all_pars=0):
     
     # parseval's check : 
     print(f'Check Parsevals - data variance equals integral of spectrum?')
-    print(f'Data variance / spectrum integration: {(np.nanvar(data) / np.sum(tot_amp)*df ): 0.4f} ')
+    print(f'Data variance / spectrum integration: {(np.nanvar(data) / (np.sum(tot_amp)*df) ): 0.4f} ')
     
     nu = 2*M # degrees of freedom 
     top = 1-0.05/2; bot = 0.05/2 
